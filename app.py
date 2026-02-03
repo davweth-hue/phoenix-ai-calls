@@ -108,7 +108,7 @@ def ok():
     return "OK"
 
 
-@app.post("/voice")
+@app.route("/voice", methods=["GET", "POST"])
 def voice_entry():
     """
     Twilio hits this when a call comes in.
@@ -127,9 +127,9 @@ def voice_entry():
     return twiml(xml)
 
 
-@app.post("/voice/issue")
+@app.route("/voice/issue", methods=["GET", "POST"])
 def voice_issue():
-    issue = (request.form.get("SpeechResult") or "").strip()
+    issue = (request.values.get("SpeechResult") or "").strip()
 
     if not issue:
         xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -154,10 +154,10 @@ def voice_issue():
     return twiml(xml)
 
 
-@app.post("/voice/phone")
+@app.route("/voice/phone", methods=["GET", "POST"])
 def voice_phone():
-    issue = (request.args.get("issue") or "").strip()
-    phone_spoken = (request.form.get("SpeechResult") or "").strip()
+    issue = (request.values.get("issue") or "").strip()
+    phone_spoken = (request.values.get("SpeechResult") or "").strip()
 
     if not phone_spoken:
         xml = """<?xml version="1.0" encoding="UTF-8"?>
@@ -183,14 +183,14 @@ def voice_phone():
     return twiml(xml)
 
 
-@app.post("/voice/finalize")
+@app.route("/voice/finalize", methods=["GET", "POST"])
 def voice_finalize():
-    issue = (request.args.get("issue") or "").strip()
-    phone_spoken = (request.args.get("phone") or "").strip()
-    name = (request.form.get("SpeechResult") or "").strip()
+    issue = (request.values.get("issue") or "").strip()
+    phone_spoken = (request.values.get("phone") or "").strip()
+    name = (request.values.get("SpeechResult") or "").strip()
 
-    call_sid = request.form.get("CallSid", "")
-    from_number = request.form.get("From", "")
+    call_sid = request.values.get("CallSid", "")
+    from_number = request.values.get("From", "")
 
     transcript = (
         f"CallerName: {name}\n"
